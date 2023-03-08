@@ -1,0 +1,47 @@
+---
+- name: Deploy Apache web server
+  hosts: apache_servers
+  become: yes
+
+  vars:
+    apache_port: 80
+    apache_index_file: index.html
+    apache_document_root: /var/www/html
+
+  tasks:
+    - name: Install Apache web server
+      apt:
+        name: apache2
+        state: present
+
+    - name: Configure Apache web server
+      template:
+        src: apache.conf.j2
+        dest: /etc/apache2/sites-available/000-default.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart apache
+
+    - name: Create document root directory
+      file:
+        path: "{{ apache_document_root }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Create index file
+      copy:
+        content: "<html><head><title>Welcome to my website</title></head><body><h1>Hello World!</h1></body></html>"
+        dest: "{{ apache_document_root }}/{{ apache_index_file }}"
+        owner: www-data
+        group: www-data
+        mode: '0644'
+      notify: restart apache
+
+  handlers:
+    - name: restart apache
+      service:
+        name: apache2
+        state: restarted
