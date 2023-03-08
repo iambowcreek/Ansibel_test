@@ -1,2 +1,2 @@
-[local]
+[apache_servers]
 172.31.15.84 ansible_user=ubuntu
