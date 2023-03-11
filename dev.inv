@@ -1,2 +1,2 @@
 [apache_servers]
-172-31-24-102 ansible_user=ubuntu
+172.31.14.254 ansible_user=ubuntu
